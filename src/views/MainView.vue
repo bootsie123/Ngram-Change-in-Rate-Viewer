@@ -8,6 +8,7 @@
           v-model:corpus="searchParams.corpus"
           v-model:startYear="searchParams.startYear"
           v-model:endYear="searchParams.endYear"
+          v-model:smoothing="searchParams.smoothing"
           v-model:showGradient="graphOptions.showGradient"
           v-model:showSideBySide="graphOptions.showSideBySide"
         />
@@ -33,7 +34,8 @@
           tags: [],
           corpus: 26,
           startYear: 1500,
-          endYear: 2019
+          endYear: 2019,
+          smoothing: 0
         },
         graphOptions: {
           showGradient: false,

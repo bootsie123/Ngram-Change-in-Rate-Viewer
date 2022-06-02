@@ -129,7 +129,8 @@
           this.data.tags.join(","),
           this.data.startYear,
           this.data.endYear,
-          this.data.corpus
+          this.data.corpus,
+          this.data.smoothing
         );
 
         if (res.status === 200) {

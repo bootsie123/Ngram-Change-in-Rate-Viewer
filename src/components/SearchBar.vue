@@ -39,6 +39,15 @@
       <div class="control">
         <DropdownSearch
           class="is-medium"
+          :modelValue="modifiedSmoothing"
+          @update:modelValue="$emit('update:smoothing', $event.value)"
+          :options="smoothingOptions"
+          placeholder="Smoothing"
+        />
+      </div>
+      <div class="control">
+        <DropdownSearch
+          class="is-medium"
           :modelValue="modifiedCorpus"
           @update:modelValue="$emit('update:corpus', $event.value)"
           :options="corpuses"
@@ -80,6 +89,7 @@
       startYear: Number,
       endYear: Number,
       corpus: Number,
+      smoothing: Number,
       showGradient: Boolean,
       showSideBySide: Boolean
     },
@@ -88,6 +98,7 @@
       "update:startYear",
       "update:endYear",
       "update:corpus",
+      "update:smoothing",
       "update:showGradient",
       "update:showSideBySide"
     ],
@@ -106,6 +117,21 @@
         return this.tags.map(tag => {
           return { text: tag, tiClasses: ["ti-valid"] };
         });
+      },
+      modifiedSmoothing() {
+        return { name: this.smoothing.toString(), value: this.smoothing };
+      },
+      smoothingOptions() {
+        const options = [];
+
+        for (let i = 0; i <= 50; i++) {
+          options.push({
+            name: i.toString(),
+            value: i
+          });
+        }
+
+        return options;
       }
     },
     methods: {

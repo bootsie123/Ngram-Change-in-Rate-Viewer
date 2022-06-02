@@ -38,7 +38,7 @@
       </div>
       <div class="control">
         <DropdownSearch
-          class="is-medium is-rounded"
+          class="is-medium"
           :modelValue="modifiedCorpus"
           @update:modelValue="$emit('update:corpus', $event.value)"
           :options="corpuses"
@@ -146,11 +146,27 @@
     border-radius: 9999px;
   }
 
-  :deep(.ti-input),
-  :deep(.ti-new-tag-input),
-  :deep(.control button) {
-    border: none;
+  ::v-deep(.ti-input),
+  ::v-deep(.ti-new-tag-input),
+  ::v-deep(.control button) {
+    border: none !important;
     box-shadow: none !important;
+  }
+
+  .searchBar .control {
+    background: white;
+  }
+
+  .searchBar .control:first-child {
+    border-radius: 9999px 0 0 9999px !important;
+  }
+
+  .searchBar .control:last-child {
+    border-radius: 0 9999px 9999px 0 !important;
+  }
+
+  ::v-deep(.searchBar .control:last-child button) {
+    background: none !important;
   }
 
   .searchBar .control:focus-within::after {
@@ -173,37 +189,40 @@
     left: unset;
   }
 
-  :deep(.ti-new-tag-input) {
+  ::v-deep(.ti-new-tag-input) {
     @include input;
-    width: 150px;
+    width: 150px !important;
   }
 
-  :deep(.vue-tags-input),
-  :deep(.ti-input),
-  :deep(.ti-new-tag-input) {
-    height: 100%;
-    margin: 0;
-    padding: 0;
+  ::v-deep(.vue-tags-input),
+  ::v-deep(.ti-input),
+  ::v-deep(.ti-new-tag-input) {
+    height: 100% !important;
+    margin: 0 !important;
   }
 
-  .vue-tags-input {
-    max-width: none;
-    padding: calc(0.5em - 1px) calc(calc(0.75em - 1px) + 0.375em);
-    border-radius: 9999px 0 0 9999px;
+  ::v-deep(.ti-new-tag-input-wrapper) {
+    margin: 0 !important;
   }
 
-  :deep(.ti-actions) {
-    margin-top: 0.2em;
+  ::v-deep(.vue-tags-input) {
+    max-width: none !important;
+    padding: calc(0.5em - 1px) calc(calc(0.75em - 1px) + 0.375em) !important;
+    border-radius: 9999px 0 0 9999px !important;
   }
 
-  :deep(.ti-tag) {
-    padding: 3px 7px;
-    background: $info;
-    border-radius: 9999px;
+  ::v-deep(.ti-actions) {
+    margin-top: 0.2em !important;
   }
 
-  :deep(.ti-deletion-mark) {
-    background-color: $danger;
+  ::v-deep(.ti-tag) {
+    padding: 3px 7px !important;
+    background: $info !important;
+    border-radius: 9999px !important;
+  }
+
+  ::v-deep(.ti-deletion-mark) {
+    background-color: $danger !important;
   }
 
   .addition {

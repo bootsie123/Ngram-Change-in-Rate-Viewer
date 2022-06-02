@@ -11,5 +11,8 @@ export default {
     gradient.push(array[array.length - 1] - array[array.length - 2]);
 
     return gradient;
+  },
+  taylorPolynomial() {
+    
   }
 };

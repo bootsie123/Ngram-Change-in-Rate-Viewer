@@ -68,6 +68,15 @@
         />
         Side By Side
       </label>
+      <div class="control">
+        <DropdownSearch
+          class="is-medium"
+          :modelValue="modifiedIterations"
+          @update:modelValue="$emit('update:iterations', $event.value)"
+          :options="iterationOptions"
+          placeholder="Taylor Iterations"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -91,7 +100,8 @@
       corpus: Number,
       smoothing: Number,
       showGradient: Boolean,
-      showSideBySide: Boolean
+      showSideBySide: Boolean,
+      iterations: Number
     },
     emits: [
       "update:tags",
@@ -100,7 +110,8 @@
       "update:corpus",
       "update:smoothing",
       "update:showGradient",
-      "update:showSideBySide"
+      "update:showSideBySide",
+      "update:iterations"
     ],
     data() {
       return {
@@ -132,6 +143,32 @@
         }
 
         return options;
+      },
+      modifiedIterations() {
+        if (this.iterations === 0) {
+          return { name: "None", value: 0 };
+        }
+
+        return { name: this.iterations.toString(), value: this.iterations };
+      },
+      iterationOptions() {
+        let options = [];
+
+        for (let i = 0; i < 11; i++) {
+          options.push(i);
+        }
+
+        for (let i = 1; i < 11; i++) {
+          options.push(i * 100);
+        }
+
+        for (let i = 2; i <= 10; i++) {
+          options.push(i * 1000);
+        }
+
+        return options.map(i => {
+          return { name: i.toString(), value: i };
+        });
       }
     },
     methods: {
@@ -205,12 +242,12 @@
     content: "";
   }
 
-  .searchBar .control:first-of-type:focus-within::after,
-  .searchBar .control:last-of-type:focus-within::after {
+  .searchBar .control:first-child:focus-within::after,
+  .searchBar .control:last-child:focus-within::after {
     width: calc(100% - 1.25rem);
   }
 
-  .searchBar .control:first-of-type:focus-within::after {
+  .searchBar .control:first-child:focus-within::after {
     right: 0;
     left: unset;
   }
@@ -266,11 +303,11 @@
     line-height: 1.5;
   }
 
-  .addition .checkbox:first-of-type {
+  .addition > :first-child {
     padding: 0 0.5em 0 1em;
   }
 
-  .addition .checkbox:last-of-type {
+  .addition > :last-child {
     padding: 0 1em 0 0.5em;
   }
 </style>

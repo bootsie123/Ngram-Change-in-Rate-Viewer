@@ -6,6 +6,9 @@
       </FusionCharts>
       <div class="hidden"></div>
     </div>
+    <div class="formulaContainer" v-if="taylorFormula">
+      <VueMathjax :formula="taylorFormula"></VueMathjax>
+    </div>
   </div>
 </template>
 
@@ -41,6 +44,7 @@
     data() {
       return {
         loading: false,
+        taylorFormula: "",
         dataSource: {
           data: {},
           caption: {
@@ -156,6 +160,36 @@
                 ]);
               }
             }
+
+            if (this.graphOptions.iterations) {
+              const {
+                center,
+                func: taylorPolynomial,
+                terms
+              } = await calc.taylorPolynomial(word.timeseries, this.graphOptions.iterations);
+
+              this.taylorFormula = this.convertToFormula(center, terms);
+
+              const centerYear = this.data.startYear + center;
+              const series = `${word.ngram} - ${this.graphOptions.iterations}`;
+
+              this.dataSource.dataMarker = [
+                {
+                  series,
+                  time: centerYear,
+                  timeFormat: "%Y",
+                  identifier: "C",
+                  tooltext: `Taylor Polynomial centered around ${centerYear}`
+                }
+              ];
+
+              for (let i = 0; i < this.data.endYear - this.data.startYear + 1; i++) {
+                data.push(["1/1/" + (this.data.startYear + i), series, (await taylorPolynomial(i)) * 100]);
+              }
+            } else {
+              this.dataSource.dataMarker = [];
+              this.taylorFormula = "";
+            }
           }
 
           const fusionTable = new FusionCharts.DataStore().createDataTable(data, this.schema);
@@ -164,6 +198,25 @@
 
           this.loading = false;
         }
+      },
+      convertToFormula(center, terms) {
+        let formula = "$$ P(x) = ";
+
+        for (const i in terms) {
+          if (terms[i].cons === 1) {
+            terms[i].cons = "";
+          }
+
+          formula += `${terms[i].cons}(x - ${center})^{${terms[i].index}}`;
+
+          if (i < terms.length - 1) {
+            formula += "+";
+          }
+        }
+
+        formula += "$$";
+
+        return formula;
       }
     }
   };
@@ -180,6 +233,12 @@
     background: white;
     border-radius: 15px;
     box-shadow: 0px 0px 20px 0px #0000000f;
+  }
+
+  .formulaContainer {
+    @extend .canvas;
+
+    margin-top: 1.5em;
   }
 
   .hidden {

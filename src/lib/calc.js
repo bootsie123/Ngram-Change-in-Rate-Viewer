@@ -1,4 +1,4 @@
-export default {
+const funcs = {
   gradient(array) {
     const gradient = [];
 
@@ -12,7 +12,74 @@ export default {
 
     return gradient;
   },
-  taylorPolynomial() {
-    
+  gradientNTimes(array, num = 0) {
+    if (num <= 0) {
+      return array;
+    } else if (num === 1) {
+      return funcs.gradient(array);
+    } else {
+      return funcs.gradientNTimes(funcs.gradient(array), num - 1);
+    }
+  },
+  factorial(num) {
+    if (num <= 1) return 1;
+
+    let total = num;
+
+    for (let i = num - 1; i > 0; i--) {
+      total *= i;
+    }
+
+    return total;
+  },
+  percentChange(val, original) {
+    return Math.abs((val - original) / original);
+  },
+  async taylorPolynomial(data, iterations = 5000, terms = [], center) {
+    if (!center) {
+      center = Math.floor(data.length / 2);
+    }
+
+    const { terms: funcTerms } = await funcs.taylorPolynomialWorker(data, iterations, terms, center);
+
+    return { center, terms, func: x => funcs.taylorPolynomialEvalutate(x, funcTerms) };
+  },
+  taylorPolynomialWorker(data, iterations, terms, center) {
+    return new Promise(resolve => {
+      setImmediate(() => {
+        let gradient = data;
+
+        for (let i = terms.length; i < iterations; i++) {
+          if (i === 0) {
+            terms.push({ index: i, cons: 1, func: () => data[center] });
+          } else {
+            gradient = funcs.gradient(gradient);
+
+            const a = gradient[center] / funcs.factorial(i);
+
+            terms.push({ index: i, cons: a, func: x => Math.pow(x - center, i) * a });
+          }
+        }
+
+        resolve({ terms, gradient });
+      });
+    });
+  },
+  taylorPolynomialEvalutate(x, terms) {
+    return new Promise(resolve => {
+      let total = 0;
+
+      for (let i = 0; i < terms.length; i++) {
+        const val = terms[i].func(x);
+
+        if (!isNaN(val) && isFinite(val)) {
+          total += val;
+        }
+      }
+
+      resolve(total);
+    });
   }
 };
+
+export default funcs;

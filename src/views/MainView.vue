@@ -11,6 +11,7 @@
           v-model:smoothing="searchParams.smoothing"
           v-model:showGradient="graphOptions.showGradient"
           v-model:showSideBySide="graphOptions.showSideBySide"
+          v-model:iterations="graphOptions.iterations"
         />
         <Chart :data="searchParams" :graphOptions="graphOptions" />
       </div>
@@ -35,11 +36,12 @@
           corpus: 26,
           startYear: 1500,
           endYear: 2019,
-          smoothing: 0
+          smoothing: 3
         },
         graphOptions: {
           showGradient: false,
-          showSideBySide: false
+          showSideBySide: false,
+          iterations: 0
         }
       };
     }

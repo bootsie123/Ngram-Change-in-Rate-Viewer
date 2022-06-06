@@ -1,13 +1,16 @@
 <template>
   <div class="chart">
     <Spinner v-if="loading" />
-    <div class="canvas" v-else-if="Object.keys(dataSource.data).length > 0">
+    <div class="canvas" v-else-if="hasData">
       <FusionCharts type="timeseries" width="100%" height="600" dataFormat="json" :dataSource="dataSource">
       </FusionCharts>
       <div class="hidden"></div>
     </div>
-    <div class="formulaContainer" v-if="taylorFormula">
-      <VueMathjax :formula="taylorFormula"></VueMathjax>
+    <div class="formulaContainer" v-if="hasData && taylorFormulas.length > 0">
+      <div v-for="formula in taylorFormulas" :key="formula.word">
+        <span><b>{{formula.word}}</b></span>
+        <VueMathjax :formula="formula.formula"></VueMathjax>
+      </div>
     </div>
   </div>
 </template>
@@ -44,7 +47,7 @@
     data() {
       return {
         loading: false,
-        taylorFormula: "",
+        taylorFormulas: [],
         dataSource: {
           data: {},
           caption: {
@@ -127,6 +130,11 @@
         deep: true
       }
     },
+    computed: {
+      hasData() {
+        return Object.keys(this.dataSource.data).length > 0;
+      }
+    },
     methods: {
       async updateData() {
         const res = await ngram.getData(
@@ -139,6 +147,9 @@
 
         if (res.status === 200) {
           const data = [];
+
+          this.dataSource.dataMarker = [];
+          this.taylorFormulas = [];
 
           for (let index in res.data.data) {
             const word = res.data.data[index];
@@ -168,7 +179,7 @@
                 terms
               } = await calc.taylorPolynomial(word.timeseries, this.graphOptions.iterations);
 
-              this.taylorFormula = this.convertToFormula(center, terms);
+              this.taylorFormulas.push({ word: word.ngram, formula: this.convertToFormula(center, terms) });
 
               const centerYear = this.data.startYear + center;
               const series = `${word.ngram} - ${this.graphOptions.iterations}`;
@@ -186,9 +197,6 @@
               for (let i = 0; i < this.data.endYear - this.data.startYear + 1; i++) {
                 data.push(["1/1/" + (this.data.startYear + i), series, (await taylorPolynomial(i)) * 100]);
               }
-            } else {
-              this.dataSource.dataMarker = [];
-              this.taylorFormula = "";
             }
           }
 
@@ -253,6 +261,14 @@
     @extend .canvas;
 
     margin-top: 1.5em;
+  }
+
+  .formulaContainer > * {
+    margin-bottom: 1em;
+  }
+
+  .formulaContainer > :last-child {
+    margin-bottom: unset;
   }
 
   .hidden {

@@ -12,15 +12,6 @@ const funcs = {
 
     return gradient;
   },
-  gradientNTimes(array, num = 0) {
-    if (num <= 0) {
-      return array;
-    } else if (num === 1) {
-      return funcs.gradient(array);
-    } else {
-      return funcs.gradientNTimes(funcs.gradient(array), num - 1);
-    }
-  },
   factorial(num) {
     if (num <= 1) return 1;
 
@@ -31,9 +22,6 @@ const funcs = {
     }
 
     return total;
-  },
-  percentChange(val, original) {
-    return Math.abs((val - original) / original);
   },
   async taylorPolynomial(data, iterations = 5000, terms = [], center) {
     if (!center) {

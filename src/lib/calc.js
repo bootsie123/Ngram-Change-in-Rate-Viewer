@@ -40,9 +40,9 @@ const funcs = {
       center = Math.floor(data.length / 2);
     }
 
-    const { terms: funcTerms } = await funcs.taylorPolynomialWorker(data, iterations, terms, center);
+    await funcs.taylorPolynomialWorker(data, iterations, terms, center);
 
-    return { center, terms, func: x => funcs.taylorPolynomialEvalutate(x, funcTerms) };
+    return { center, terms, func: x => funcs.taylorPolynomialEvalutate(x, terms) };
   },
   taylorPolynomialWorker(data, iterations, terms, center) {
     return new Promise(resolve => {
@@ -51,7 +51,7 @@ const funcs = {
 
         for (let i = terms.length; i < iterations; i++) {
           if (i === 0) {
-            terms.push({ index: i, cons: 1, func: () => data[center] });
+            terms.push({ index: i, cons: data[center], func: () => data[center] });
           } else {
             gradient = funcs.gradient(gradient);
 

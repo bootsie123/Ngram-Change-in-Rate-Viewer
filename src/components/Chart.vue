@@ -202,12 +202,26 @@
       convertToFormula(center, terms) {
         let formula = "$$ P(x) = ";
 
+        const toExponential = num => {
+          return num.toExponential().toString().replace("e", "x10^{") + "}";
+        }
+
         for (const i in terms) {
           if (terms[i].cons === 1) {
             terms[i].cons = "";
           }
 
-          formula += `${terms[i].cons}(x - ${center})^{${terms[i].index}}`;
+          if (i == 0) {
+            formula += toExponential(terms[i].cons);
+          } else {
+            const exp = terms[i].index;
+            
+            formula += `${toExponential(terms[i].cons)}(x - ${center})`;
+
+            if (exp > 1) {
+              formula+= `^{${exp}}`;
+            }
+          }
 
           if (i < terms.length - 1) {
             formula += "+";
